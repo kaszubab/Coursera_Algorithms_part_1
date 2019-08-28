@@ -1,0 +1,183 @@
+/* *****************************************************************************
+ *  Name:Bartosz Kaszuba
+ *  Date:12.08.2019
+ *  Description: Main class of DEQUE - queue that can add and remove elements from
+ *  both beginning and end of the structure
+ **************************************************************************** */
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class Deque<Item> implements Iterable<Item> {
+
+    private Node start;
+    private Node end;
+    private int size;
+
+
+    // construct an empty deque
+    private class Node {
+        private Item data;
+        private Node next;
+        private Node prev;
+    }
+
+    public Deque() {
+        size = 0;
+    }
+
+    private void checkValidInput(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("No null input");
+    }
+    // is the deque empty?
+    public boolean isEmpty() {
+        if (end == null)
+            return true;
+        return false;
+    }
+
+    // return the number of items on the deque
+    public int size() {
+        return size;
+    }
+
+    // add the item to the front
+    public void addFirst(Item item) {
+        if (item == null)
+        {
+            throw new IllegalArgumentException("No null input");
+        }
+        Node node = new Node();
+        node.data = item;
+        node.prev = null;
+        if (end == null && start == null) {
+            node.next = null;
+            end = node;
+            start = node;
+        }
+        else if (start == end) {
+            node.next = end;
+            start = node;
+            end.prev = node;
+        }
+        else {
+            node.next = start;
+            start.prev = node;
+            start = node;
+        }
+        size++;
+    }
+
+    // add the item to the back
+    public void addLast(Item item) {
+        if (item == null)
+        {
+            throw new IllegalArgumentException("No null input");
+        }
+        Node node = new Node();
+        node.data = item;
+        node.next = null;
+        if (start == null && end == null) {
+            node.prev = null;
+            start = node;
+            end = node;
+        }
+        else if (start == end) {
+            node.prev = start;
+            end = node;
+            start.next = node;
+        }
+        else {
+            node.prev = end;
+            end.next = node;
+            end = node;
+        }
+        size++;
+    }
+
+    // remove and return the item from the front
+    public Item removeFirst() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Queue empty");
+        }
+        Item item = start.data;
+        if (start == end) {
+            start = null;
+            end = null;
+        }
+        else if (start.next == end) {
+            end.prev = null;
+            start = end;
+        }
+        else {
+            start = start.next;
+            start.prev = null;
+        }
+        size--;
+        return item;
+    }
+
+    // remove and return the item from the back
+    public Item removeLast() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Queue empty");
+        }
+        Item item = end.data;
+        if (start == end) {
+            start = null;
+            end = null;
+        }
+        else if (end.prev == start) {
+            start.next = null;
+            end = start;
+        }
+        else {
+            end = end.prev;
+            end.next = null;
+        }
+        size--;
+        return item;
+    }
+
+    private class ListIterator implements Iterator<Item> {
+        private Node current = start;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Remove not available");
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext())
+                throw new NoSuchElementException("Iterator already empty");
+            Item item = current.data;
+            current = current.next;
+            return item;
+        }
+    }
+
+    // return an iterator over items in order from front to back
+    public Iterator<Item> iterator() {
+        return new ListIterator();
+    }
+
+
+    // unit testing (required)
+    public static void main(String[] args) {
+        Deque<Integer> deq = new Deque<>();
+        System.out.println(deq.isEmpty());
+        deq.addFirst(2);
+        System.out.println(deq.size());
+        System.out.println(deq.removeLast());
+        System.out.println(deq.isEmpty());
+
+    }
+
+}
