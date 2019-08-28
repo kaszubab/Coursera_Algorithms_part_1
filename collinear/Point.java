@@ -8,7 +8,9 @@
  *
  ******************************************************************************/
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
 
@@ -127,18 +129,32 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        Point p1 = new Point(1, 1);
-        Point p2 = new Point(2, 2);
-        Point p3 = new Point(3, 3);
-        Point p4 = new Point(4, 4);
-        Point [] pointarr = {p1, p2, p3, p4};
-        //Arrays.sort(pointarr, new Point(3, 4));
-        for (Point x : pointarr) {
-            System.out.println(x);
+
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
         }
-        BruteCollinearPoints bt = new BruteCollinearPoints(pointarr);
-        System.out.println(bt.numberOfSegments());
-        // System.out.println(p1.slopeOrder().compare(p2, p2));
-        /* YOUR CODE HERE */
+
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
     }
 }
