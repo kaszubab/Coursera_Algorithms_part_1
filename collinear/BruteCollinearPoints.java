@@ -45,5 +45,5 @@ public class BruteCollinearPoints {
         }
     }   // finds all line segments containing 4 points
     public int numberOfSegments() { return segmentsQuantity; }       // the number of line segments
-    public LineSegment[] segments() { return segments; }                // the line segments
+    public LineSegment[] segments() { return segments.clone(); }                // the line segments
 }
