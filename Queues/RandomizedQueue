@@ -21,7 +21,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resize(int cap) {
         Item [] copy = (Item []) new Object[cap];
-        for(int i = 0; i < last; i++) {
+        for (int i = 0; i < last; i++) {
             copy[i] = arr[i];
         }
         arr = copy;
@@ -47,15 +47,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public void enqueue(Item item) {
         if (item == null)
             throw new IllegalArgumentException("No null values");
-        if (last == arr.length )
-            resize(2*arr.length);
+        if (last == arr.length) resize(2*arr.length);
         arr[last++] = item;
     }
 
     // remove and return a random item
     public Item dequeue() {
-        if (isEmpty())
-            throw new NoSuchElementException("Queue empty");
+        if (isEmpty()) throw new NoSuchElementException("Queue empty");
         int index = StdRandom.uniform(0, last);
         Item item = arr[index];
         arr[index] = null;
@@ -67,8 +65,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // return a random item (but do not remove it)
     public Item sample() {
-        if (isEmpty())
-            throw new NoSuchElementException("Queue empty");
+        if (isEmpty()) throw new NoSuchElementException("Queue empty");
         int index = StdRandom.uniform(0, last);
         Item item = arr[index];
         return  item;
@@ -77,12 +74,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // return an independent iterator over items in random order
     private class ArrayIterator implements Iterator<Item> {
 
-        private int i = last;
+        private int i;
         private Item [] resArr;
 
         ArrayIterator() {
-            resArr = arr;
-            StdRandom.shuffle(resArr,0,last);
+            resArr =  (Item []) new Object[last];
+            for (int ind = 0; ind < last; ind++) {
+                resArr[ind] = arr[ind];
+            }
+            i = last;
+            StdRandom.shuffle(resArr, 0, last);
         }
 
         @Override
@@ -99,7 +100,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         public Item next() {
             if (!hasNext())
                 throw new NoSuchElementException("Iterator already empty");
-            return resArr[--i];
+            return  resArr[--i];
         }
     }
 
@@ -114,10 +115,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         queue.enqueue(1);
         queue.enqueue(2);
         queue.enqueue(3);
+        queue.enqueue(4);
+        queue.enqueue(5);
         System.out.println(queue.sample());
-         for (int x : queue) {
+        for (int x : queue) {
+            for (int y : queue) {
+                System.out.println("iterator  " + y);
+            }
             System.out.println(x);
         }
+       /* System.out.println("Przerwa");
+        for (int x : queue) {
+            System.out.println(x);
+        }*/
     }
 
 }
