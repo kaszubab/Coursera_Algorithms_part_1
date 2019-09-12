@@ -10,7 +10,6 @@ import edu.princeton.cs.algs4.Stack;
 public class Solver {
 
     private searchNode solution;
-    private boolean solvable;
 
     private class searchNode implements Comparable<searchNode> {
         private Board currBoard;
@@ -49,14 +48,11 @@ public class Solver {
                 currNode = PQ1.delMin();
                 if (currNode.currBoard.isGoal()) {
                     solution = currNode;
-                    solvable = true;
                     break;
                 }
                 for (Board x : currNode.currBoard.neighbors()) {
-                    searchNode prevNodes = currNode.prevNode;
-                    while (prevNodes != null && !prevNodes.currBoard.equals(x))prevNodes = prevNodes.prevNode;
-                    if (prevNodes == null) {
-                        searchNode nsNode = new searchNode(x, currNode.movesNumber, currNode);
+                    if (!x.equals(currNode.prevNode.currBoard)) {
+                        searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
                         PQ1.insert(nsNode);
                     }
                 }
@@ -65,15 +61,12 @@ public class Solver {
             else {
                 currNode = PQ2.delMin();
                 if (currNode.currBoard.isGoal()) {
-                    solution = currNode;
-                    solvable = false;
+                    solution = null;
                     break;
                 }
                 for (Board x : currNode.currBoard.neighbors()) {
-                    searchNode prevNodes = currNode.prevNode;
-                    while (prevNodes != null && !prevNodes.currBoard.equals(x))prevNodes = prevNodes.prevNode;
-                    if (prevNodes == null) {
-                        searchNode nsNode = new searchNode(x, currNode.movesNumber, currNode);
+                    if (!x.equals(currNode.prevNode.currBoard)) {
+                        searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
                         PQ2.insert(nsNode);
                     }
                 }
@@ -84,17 +77,22 @@ public class Solver {
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return solvable;
+        return solution != null;
     }
 
     // min number of moves to solve initial board
     public int moves() {
-        return solution.movesNumber;
+        if (isSolvable())  return solution.movesNumber;
+        return -1;
     }
 
     // sequence of boards in a shortest solution
     public Iterable<Board> solution() {
         Stack<Board> boardStack = new Stack<>();
+        if(solution == null) {
+            boardStack.push(null);
+            return boardStack;
+        }
         searchNode iterableSolution = solution;
         while (iterableSolution != null) {
             boardStack.push(iterableSolution.currBoard);

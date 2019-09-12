@@ -123,11 +123,12 @@ public class Board {
     // all neighboring boards
     public Iterable<Board> neighbors() {
         Stack<Board> boardStack = new Stack<>();
-        int i = 0, j = 0;
-        while (board[i][j] != 0) {
-            i = (i + 1) % boardDim;
-            j = (j + 1) % boardDim;
+        int count = 0;
+        while (board[count / boardDim][count % boardDim] != 0) {
+            count++;
         }
+        int i = count/boardDim;
+        int j = count % boardDim;
         if (i > 0) {
             int [][] newBoard; //= new int[boardDim][boardDim];
             newBoard = dimArrayCopy(this.board);
