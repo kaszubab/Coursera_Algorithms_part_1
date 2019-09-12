@@ -51,7 +51,11 @@ public class Solver {
                     break;
                 }
                 for (Board x : currNode.currBoard.neighbors()) {
-                    if (!x.equals(currNode.prevNode.currBoard)) {
+                    if (currNode.prevNode == null) {
+                        searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
+                        PQ1.insert(nsNode);
+                    }
+                    else if (!x.equals(currNode.prevNode.currBoard)) {
                         searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
                         PQ1.insert(nsNode);
                     }
@@ -65,7 +69,11 @@ public class Solver {
                     break;
                 }
                 for (Board x : currNode.currBoard.neighbors()) {
-                    if (!x.equals(currNode.prevNode.currBoard)) {
+                    if (currNode.prevNode == null) {
+                        searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
+                        PQ2.insert(nsNode);
+                    }
+                    else if (!x.equals(currNode.prevNode.currBoard)) {
                         searchNode nsNode = new searchNode(x, 1 + currNode.movesNumber, currNode);
                         PQ2.insert(nsNode);
                     }
@@ -82,28 +90,31 @@ public class Solver {
 
     // min number of moves to solve initial board
     public int moves() {
-        if (isSolvable())  return solution.movesNumber;
+        if (isSolvable()) return solution.movesNumber;
         return -1;
     }
 
     // sequence of boards in a shortest solution
     public Iterable<Board> solution() {
         Stack<Board> boardStack = new Stack<>();
-        if(solution == null) {
+        if (solution == null) {
             boardStack.push(null);
             return boardStack;
         }
-        searchNode iterableSolution = solution;
-        while (iterableSolution != null) {
-            boardStack.push(iterableSolution.currBoard);
-            iterableSolution = iterableSolution.prevNode;
-        }
-        return boardStack;
+            searchNode iterableSolution = solution;
+            while (iterableSolution != null) {
+                boardStack.push(iterableSolution.currBoard);
+                iterableSolution = iterableSolution.prevNode;
+            }
+            return boardStack;
     }
 
     // test client (see below)
     public static void main(String[] args) {
-       // Solver solver = new Solver();
+        int [][] arr = {{1,2},{0,3}};
+        Board board = new Board(arr);
+       Solver solver = new Solver(board);
+       System.out.println(solver.moves());
      }
 
 }
