@@ -35,7 +35,7 @@ public class Board {
         return copyArray;
     }
 
-    public int setHamming() {
+    private int setHamming() {
         int hamingDist = 0;
         int item;
         for (int i = 0; i < boardDim; i++) {
@@ -49,7 +49,7 @@ public class Board {
 
     }
 
-    public int setManhattan() {
+    private int setManhattan() {
         int manhattanDist = 0;
         int item;
         for (int i = 0; i < boardDim; i++) {

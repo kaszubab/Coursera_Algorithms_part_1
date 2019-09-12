@@ -5,28 +5,29 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
 
 public class Solver {
 
     private searchNode solution;
-    boolean solvable;
+    private boolean solvable;
 
     private class searchNode implements Comparable<searchNode> {
         private Board currBoard;
-        private int priorityValue
+        private int priorityValue;
         private int movesNumber;
         private searchNode prevNode;
 
-        public searchNode(Board Board, int movesNumber, searchNode prevNode) {
-            this.currBoard = Board;
+        public searchNode(Board board, int movesNumber, searchNode prevNode) {
+            this.currBoard = board;
             this.movesNumber = movesNumber;
             this.prevNode = prevNode;
-            this.priorityValue = movesNumber + Board.manhattan();
+            this.priorityValue = movesNumber + board.manhattan();
         }
 
         @Override
-        public int compareTo(searchNode o) {
-            return (this.priorityValue - o.priorityValue);
+        public int compareTo(searchNode other) {
+            return (this.priorityValue - other.priorityValue);
         }
     }
 
@@ -92,9 +93,19 @@ public class Solver {
     }
 
     // sequence of boards in a shortest solution
-    public Iterable<Board> solution() 
+    public Iterable<Board> solution() {
+        Stack<Board> boardStack = new Stack<>();
+        searchNode iterableSolution = solution;
+        while (iterableSolution != null) {
+            boardStack.push(iterableSolution.currBoard);
+            iterableSolution = iterableSolution.prevNode;
+        }
+        return boardStack;
+    }
 
     // test client (see below)
-    public static void main(String[] args)
+    public static void main(String[] args) {
+       // Solver solver = new Solver();
+     }
 
 }
