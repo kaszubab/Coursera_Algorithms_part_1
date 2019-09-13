@@ -96,17 +96,16 @@ public class Solver {
 
     // sequence of boards in a shortest solution
     public Iterable<Board> solution() {
-        Stack<Board> boardStack = new Stack<>();
         if (solution == null) {
-            boardStack.push(null);
-            return boardStack;
+            return null;
         }
-            searchNode iterableSolution = solution;
-            while (iterableSolution != null) {
-                boardStack.push(iterableSolution.currBoard);
-                iterableSolution = iterableSolution.prevNode;
-            }
-            return boardStack;
+        Stack<Board> boardStack = new Stack<>();
+        searchNode iterableSolution = solution;
+        while (iterableSolution != null) {
+            boardStack.push(iterableSolution.currBoard);
+            iterableSolution = iterableSolution.prevNode;
+        }
+        return boardStack;
     }
 
     // test client (see below)
