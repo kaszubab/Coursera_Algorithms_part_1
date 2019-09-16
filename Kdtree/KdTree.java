@@ -43,11 +43,11 @@ public class KdTree {
         // if (currNode.p.equals(p)) return currNode;
         if (even) {
             if (currNode.p.x() <= p.x()) currNode.rt = insertRecur(p, currNode.rt, !even, currNode.p.x(), yMin, xMax, yMax);
-            else currNode.lb = insertRecur(p, currNode.lb, !even, currNode.p.x(), yMin, currNode.p.x(), yMax);
+            else currNode.lb = insertRecur(p, currNode.lb, !even, xMin, yMin, currNode.p.x(), yMax);
         }
         else {
-            if (currNode.p.y() <= p.y()) currNode.rt = insertRecur(p, currNode.rt, !even, currNode.p.x(), currNode.p.y(), xMax, yMax);
-            else currNode.lb = insertRecur(p, currNode.lb, !even, currNode.p.x(), yMin, xMax, currNode.p.y());
+            if (currNode.p.y() <= p.y()) currNode.rt = insertRecur(p, currNode.rt, !even, xMin, currNode.p.y(), xMax, yMax);
+            else currNode.lb = insertRecur(p, currNode.lb, !even, xMin, yMin, xMax, currNode.p.y());
         }
         return currNode;
     }
