@@ -29,6 +29,9 @@ public class PointSET {
         return rBTree.contains(p);
     }            // does the set contain point p?
     public void draw() {
+        for (Point2D x : rBTree) {
+            x.draw();
+        }
 
     }                         // draw all points to standard draw
     public Iterable<Point2D> range(RectHV rect) {
