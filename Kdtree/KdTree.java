@@ -6,7 +6,6 @@
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -18,8 +17,9 @@ public class KdTree {
         private Node lb;        // the left/bottom subtree
         private Node rt;        // the right/top subtree
 
-        public Node(Point2D p) {
+        public Node(Point2D p, RectHV rect) {
             this.p = p;
+            this.rect = rect;
             this.lb = null;
             this.rt = null;
         }
@@ -33,23 +33,26 @@ public class KdTree {
         size = 0;
     } // construct an empty set of points
 
-    private Node insertRecur(Point2D p, Node currNode, boolean even) {
+    private Node insertRecur(Point2D p, Node currNode, boolean even, double xMin, double yMin, double xMax, double yMax) {
         if (currNode == null) {
-            Node node = new Node(p);
+            Node node = new Node(p, new RectHV(xMin, yMin, xMax, yMax));
             node.lb = null;
             node.rt = null;
             return node;
         }
+        // if (currNode.p.equals(p)) return currNode;
         if (even) {
-            if (currNode.p.x() < p.x()) currNode.rt = insertRecur(p, currNode.rt, !even);
-            else currNode.lb = insertRecur(p, currNode.lb, !even);
+            if (currNode.p.x() <= p.x()) currNode.rt = insertRecur(p, currNode.rt, !even, currNode.p.x(), yMin, xMax, yMax);
+            else currNode.lb = insertRecur(p, currNode.lb, !even, currNode.p.x(), yMin, currNode.p.x(), yMax);
         }
         else {
-            if (currNode.p.y() < p.y()) currNode.rt = insertRecur(p, currNode.rt, !even);
-            else currNode.lb = insertRecur(p, currNode.lb, !even);
+            if (currNode.p.y() <= p.y()) currNode.rt = insertRecur(p, currNode.rt, !even, currNode.p.x(), currNode.p.y(), xMax, yMax);
+            else currNode.lb = insertRecur(p, currNode.lb, !even, currNode.p.x(), yMin, xMax, currNode.p.y());
         }
         return currNode;
     }
+
+
 
     private void drawRecur(Node currNode) {
         if (currNode != null) {
@@ -67,34 +70,51 @@ public class KdTree {
     }                         // number of points in the set
     public void insert(Point2D p) {
         if (!contains(p)) {
-            root = insertRecur(p, this.root, true);
+            root = insertRecur(p, this.root, true, 0, 0, 1, 1);
             this.size++;
         }
-    }              // add the point to the set (if it is not already in the set)
+    }
+
+    // add the point to the set (if it is not already in the set)
     public boolean contains(Point2D p) {
         Node temp = this.root;
         boolean even = true;
         while (temp != null && !temp.p.equals(p)) {
             if (even) {
-                if (temp.p.x() < p.x()) temp = temp.rt;
+                if (temp.p.x() <= p.x()) temp = temp.rt;
                 else temp = temp.lb;
-                even = !even;
             }
             else {
-                if (root.p.y() < p.y()) temp = temp.rt;
+                if (temp.p.y() <= p.y()) temp = temp.rt;
                 else temp = temp.lb;
-                even = !even;
             }
+            even = !even;
         }
         return !(temp == null);
     }          // does the set contain point p?
+
+
+
     public void draw()  {
         drawRecur(this.root);
     }                      // draw all points to standard draw
     public Iterable<Point2D> range(RectHV rect) {
         Stack<Point2D> point2DStack = new Stack<>();
-
+        rangeRecur(root, rect, point2DStack);
+        return  point2DStack;
     }            // all points that are inside the rectangle (or on the boundary)
+
+    private void rangeRecur(Node currNode, RectHV rect, Stack<Point2D> stack) {
+        if (currNode == null) return;
+        if (!currNode.rect.intersects(rect)) return;
+        if (rect.contains(currNode.p)) stack.push(currNode.p);
+
+        rangeRecur(currNode.lb, rect, stack);
+        rangeRecur(currNode.rt, rect, stack);
+    }
+
+
+
     public Point2D nearest(Point2D p) {
         return  new Point2D(4,5);
     }
