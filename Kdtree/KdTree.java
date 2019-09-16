@@ -7,6 +7,7 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
@@ -65,8 +66,10 @@ public class KdTree {
         return size;
     }                         // number of points in the set
     public void insert(Point2D p) {
-        root = insertRecur(p, this.root, true);
-        this.size++;
+        if (!contains(p)) {
+            root = insertRecur(p, this.root, true);
+            this.size++;
+        }
     }              // add the point to the set (if it is not already in the set)
     public boolean contains(Point2D p) {
         Node temp = this.root;
@@ -89,7 +92,8 @@ public class KdTree {
         drawRecur(this.root);
     }                      // draw all points to standard draw
     public Iterable<Point2D> range(RectHV rect) {
-        return new SET<Point2D>();
+        Stack<Point2D> point2DStack = new Stack<>();
+
     }            // all points that are inside the rectangle (or on the boundary)
     public Point2D nearest(Point2D p) {
         return  new Point2D(4,5);

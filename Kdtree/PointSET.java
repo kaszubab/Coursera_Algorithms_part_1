@@ -44,13 +44,13 @@ public class PointSET {
         }
         return point2DStack;
 
-    }// all points that are inside the rectangle (or on the boundary)
+    } // all points that are inside the rectangle (or on the boundary)
     public Point2D nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
         Point2D nearest = null;
         double shortestDist = 3.0;
         for (Point2D x : rBTree) {
-            if (!x.equals(p) && x.distanceSquaredTo(p) < shortestDist) {
+            if (x.distanceSquaredTo(p) < shortestDist) {
                 shortestDist = x.distanceSquaredTo(p);
                 nearest = x;
             }
