@@ -69,6 +69,7 @@ public class KdTree {
         return size;
     }                         // number of points in the set
     public void insert(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         if (!contains(p)) {
             root = insertRecur(p, this.root, true, 0, 0, 1, 1);
             this.size++;
@@ -77,6 +78,7 @@ public class KdTree {
 
     // add the point to the set (if it is not already in the set)
     public boolean contains(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         Node temp = this.root;
         boolean even = true;
         while (temp != null && !temp.p.equals(p)) {
@@ -98,11 +100,16 @@ public class KdTree {
     public void draw()  {
         drawRecur(this.root);
     }                      // draw all points to standard draw
+
+
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) throw new IllegalArgumentException();
         Stack<Point2D> point2DStack = new Stack<>();
         rangeRecur(root, rect, point2DStack);
         return  point2DStack;
     }            // all points that are inside the rectangle (or on the boundary)
+
+
 
     private void rangeRecur(Node currNode, RectHV rect, Stack<Point2D> stack) {
         if (currNode == null) return;
@@ -116,8 +123,43 @@ public class KdTree {
 
 
     public Point2D nearest(Point2D p) {
-        return  new Point2D(4,5);
+        if (p == null) throw new IllegalArgumentException();
+        Node champion = root;
+        nearestRecur(p, root, champion, champion.p.distanceSquaredTo(p), true);
+        return champion.p;
     }
+
+    private void nearestRecur(Point2D p, Node currNode, Node champion, double championDist, boolean even) {
+        if (currNode == null) return;
+        if (currNode.p.distanceSquaredTo(p) < championDist) {
+            championDist = currNode.p.distanceSquaredTo(p);
+            champion.p = currNode.p;
+        }
+
+        if (championDist < currNode.rect.distanceSquaredTo(p)) return;
+
+        if (even) {
+            if (p.x() >= currNode.p.x()) {
+                nearestRecur(p, currNode.rt, champion, championDist, !even);
+                nearestRecur(p, currNode.lb, champion, championDist, !even);
+            }
+            else {
+                nearestRecur(p, currNode.lb, champion, championDist, !even);
+                nearestRecur(p, currNode.rt, champion, championDist, !even);
+            }
+        }
+        else {
+            if (p.y() >= currNode.p.y()) {
+                nearestRecur(p, currNode.rt, champion, championDist, !even);
+                nearestRecur(p, currNode.lb, champion, championDist, !even);
+            }
+            else {
+                nearestRecur(p, currNode.lb, champion, championDist, !even);
+                nearestRecur(p, currNode.rt, champion, championDist, !even);
+            }
+        }
+    }
+
 
     public static void main(String[] args)     {
         KdTree tri = new KdTree();
@@ -136,7 +178,7 @@ public class KdTree {
         // StdOut.println(tri.isEmpty());
         // StdOut.println(tri.size);
         p = new Point2D(0.2, 0.7);
-         StdOut.println(tri.contains(p));
+        StdOut.println(tri.contains(p));
         p = new Point2D(0.6, 0.8);
         StdOut.println(tri.contains(p));
         p = new Point2D(0.8, 0.3);
