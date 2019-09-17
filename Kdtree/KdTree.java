@@ -139,26 +139,33 @@ public class KdTree {
             champion = currNode.p;
         }
 
-        if (champion.distanceSquaredTo(p) < currNode.rect.distanceSquaredTo(p)) return champion;
 
         if (even) {
             if (p.x() >= currNode.p.x()) {
                 champion = nearestRecur(p, currNode.rt, champion, !even);
-                champion = nearestRecur(p, currNode.lb, champion, !even);
+                if (currNode.lb != null && champion.distanceSquaredTo(p) >= currNode.lb.rect.distanceSquaredTo(p)) {
+                    champion = nearestRecur(p, currNode.lb, champion, !even);
+                }
             }
             else {
                 champion = nearestRecur(p, currNode.lb, champion, !even);
-                champion = nearestRecur(p, currNode.rt, champion, !even);
+                if (currNode.rt != null && champion.distanceSquaredTo(p) >= currNode.rt.rect.distanceSquaredTo(p)) {
+                    champion = nearestRecur(p, currNode.rt, champion, !even);
+                }
             }
         }
         else {
             if (p.y() >= currNode.p.y()) {
                 champion = nearestRecur(p, currNode.rt, champion, !even);
-                champion = nearestRecur(p, currNode.lb, champion, !even);
+                if (currNode.lb != null && champion.distanceSquaredTo(p) >= currNode.lb.rect.distanceSquaredTo(p)) {
+                    champion = nearestRecur(p, currNode.lb, champion, !even);
+                }
             }
             else {
                 champion = nearestRecur(p, currNode.lb, champion, !even);
-                champion = nearestRecur(p, currNode.rt, champion, !even);
+                if (currNode.rt != null && champion.distanceSquaredTo(p) >= currNode.rt.rect.distanceSquaredTo(p)) {
+                    champion = nearestRecur(p, currNode.rt, champion, !even);
+                }
             }
         }
         return champion;
