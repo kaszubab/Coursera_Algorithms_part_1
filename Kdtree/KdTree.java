@@ -33,6 +33,23 @@ public class KdTree {
         size = 0;
     } // construct an empty set of points
 
+
+
+    public boolean isEmpty()  {
+        return  root == null;
+    }                     // is the set empty?
+    public int size() {
+        return size;
+    }                         // number of points in the set
+    public void insert(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
+        if (!contains(p)) {
+            root = insertRecur(p, this.root, true, 0, 0, 1, 1);
+            this.size++;
+        }
+    }
+
+
     private Node insertRecur(Point2D p, Node currNode, boolean even, double xMin, double yMin, double xMax, double yMax) {
         if (currNode == null) {
             Node node = new Node(p, new RectHV(xMin, yMin, xMax, yMax));
@@ -52,29 +69,6 @@ public class KdTree {
         return currNode;
     }
 
-
-
-    private void drawRecur(Node currNode) {
-        if (currNode != null) {
-            currNode.p.draw();
-            drawRecur(currNode.lb);
-            drawRecur(currNode.rt);
-        }
-    }
-
-    public boolean isEmpty()  {
-        return  root == null;
-    }                     // is the set empty?
-    public int size() {
-        return size;
-    }                         // number of points in the set
-    public void insert(Point2D p) {
-        if (p == null) throw new IllegalArgumentException();
-        if (!contains(p)) {
-            root = insertRecur(p, this.root, true, 0, 0, 1, 1);
-            this.size++;
-        }
-    }
 
     // add the point to the set (if it is not already in the set)
     public boolean contains(Point2D p) {
@@ -102,6 +96,15 @@ public class KdTree {
     }                      // draw all points to standard draw
 
 
+    private void drawRecur(Node currNode) {
+        if (currNode != null) {
+            currNode.p.draw();
+            drawRecur(currNode.lb);
+            drawRecur(currNode.rt);
+        }
+    }
+
+
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException();
         Stack<Point2D> point2DStack = new Stack<>();
@@ -124,40 +127,41 @@ public class KdTree {
 
     public Point2D nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
-        Node champion = root;
-        nearestRecur(p, root, champion, champion.p.distanceSquaredTo(p), true);
-        return champion.p;
+        if (isEmpty()) return null;
+        Point2D champion = root.p;
+        champion = nearestRecur(p, root, champion, true);
+        return champion;
     }
 
-    private void nearestRecur(Point2D p, Node currNode, Node champion, double championDist, boolean even) {
-        if (currNode == null) return;
-        if (currNode.p.distanceSquaredTo(p) < championDist) {
-            championDist = currNode.p.distanceSquaredTo(p);
-            champion.p = currNode.p;
+    private Point2D nearestRecur(Point2D p, Node currNode, Point2D champion, boolean even) {
+        if (currNode == null) return champion;
+        if (currNode.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p)) {
+            champion = currNode.p;
         }
 
-        if (championDist < currNode.rect.distanceSquaredTo(p)) return;
+        if (champion.distanceSquaredTo(p) < currNode.rect.distanceSquaredTo(p)) return champion;
 
         if (even) {
             if (p.x() >= currNode.p.x()) {
-                nearestRecur(p, currNode.rt, champion, championDist, !even);
-                nearestRecur(p, currNode.lb, champion, championDist, !even);
+                champion = nearestRecur(p, currNode.rt, champion, !even);
+                champion = nearestRecur(p, currNode.lb, champion, !even);
             }
             else {
-                nearestRecur(p, currNode.lb, champion, championDist, !even);
-                nearestRecur(p, currNode.rt, champion, championDist, !even);
+                champion = nearestRecur(p, currNode.lb, champion, !even);
+                champion = nearestRecur(p, currNode.rt, champion, !even);
             }
         }
         else {
             if (p.y() >= currNode.p.y()) {
-                nearestRecur(p, currNode.rt, champion, championDist, !even);
-                nearestRecur(p, currNode.lb, champion, championDist, !even);
+                champion = nearestRecur(p, currNode.rt, champion, !even);
+                champion = nearestRecur(p, currNode.lb, champion, !even);
             }
             else {
-                nearestRecur(p, currNode.lb, champion, championDist, !even);
-                nearestRecur(p, currNode.rt, champion, championDist, !even);
+                champion = nearestRecur(p, currNode.lb, champion, !even);
+                champion = nearestRecur(p, currNode.rt, champion, !even);
             }
         }
+        return champion;
     }
 
 
